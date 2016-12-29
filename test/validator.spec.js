@@ -1,5 +1,6 @@
 import chai from 'chai';
-import { validator as v, Validator as V } from '../src';
+import V from '../src';
+import v from '../src/global';
 
 chai.expect();
 

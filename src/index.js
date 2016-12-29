@@ -1,6 +1,5 @@
 /**
- * export components
+ * export default component
  */
 
-export { default as validator } from './global';
-export { default as Validator } from './Validator';
+export default from './Validator';
