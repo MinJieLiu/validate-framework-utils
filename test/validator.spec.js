@@ -1,5 +1,5 @@
 import chai from 'chai';
-import v from '../src/global';
+import { validator as v, Validator as V } from '../src';
 
 chai.expect();
 
@@ -227,7 +227,7 @@ describe('validator测试', () => {
     expect(v.lessThanDate('2021-2-01', '2020-14-02')).to.be.true;
   });
 
-  it('验证 validateByField 方法', () => {
+  it('验证 validator 组件', () => {
     const emailField = {
       rules: 'required | isEmail | maxLength(32)',
       messages: '不能为空 | 请输入合法邮箱 | 不能超过 {{param}} 个字符',
@@ -292,5 +292,40 @@ describe('validator测试', () => {
       ...hobbyField,
       value: ['1'],
     }).error.message === undefined).to.be.true;
+  });
+
+  it('验证 Validator 组件', () => {
+    const validator = new V();
+    const emailField = {
+      rules: 'required | isEmail | maxLength(32)',
+      messages: '不能为空 | 请输入合法邮箱 | 不能超过 {{param}} 个字符',
+    };
+    expect(validator.validateByField({
+      ...emailField,
+      value: '123@123.com',
+    }).result).to.be.true;
+    expect(validator.validateByField({
+      ...emailField,
+      value: '',
+    }).result).to.be.false;
+    validator.addMethod('limitSelect', (field, param) => {
+      return field.value.length <= param;
+    });
+    const hobbyField = {
+      rules: 'limitSelect(2)',
+      messages: '不能超过 {{param}} 个',
+    };
+    expect(validator.validateByField({
+      ...hobbyField,
+      value: [1, 2],
+    }).result).to.be.true;
+    expect(validator.validateByField({
+      ...hobbyField,
+      value: [1, 2, 3],
+    }).result).to.be.false;
+    expect(validator.validateByField({
+        ...hobbyField,
+        value: [1, 2, 3],
+      }).error.message === '不能超过 2 个').to.be.true;
   });
 });
