@@ -15,7 +15,6 @@ export function getValue(field) {
 export function parseToDate(param) {
   const thatDate = new Date();
   const dateArray = param.split('-');
-
   thatDate.setFullYear(dateArray[0]);
   thatDate.setMonth(dateArray[1] - 1);
   thatDate.setDate(dateArray[2]);
