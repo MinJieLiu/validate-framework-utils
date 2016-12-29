@@ -1,1 +1,1 @@
-{"version":3,"sources":["../src/index.js"],"names":["validator"],"mappings":";;;;;;;AAAA;;;;;;QAGEA,S","file":"index.js","sourcesContent":["import validator from './validator';\n\nexport {\n  validator,\n};\n"]}
+{"version":3,"sources":["../src/index.js"],"names":["default"],"mappings":";;;;;;;;;;;2CAISA,O;;;;;;;;;8CACAA,O","file":"index.js","sourcesContent":["/**\n * export components\n */\n\nexport { default as validator } from './global';\nexport { default as Validator } from './Validator';\n"]}
