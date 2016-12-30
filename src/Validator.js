@@ -11,6 +11,7 @@ export default class Validator {
     Object.assign(this, {
       ...testHook,
     });
+    return this;
   }
 
   /**
