@@ -15,24 +15,21 @@ export default class Validator {
 
   /**
    * 添加验证方法
-   * @param name
-   * @param method
+   * @param methods
    * @return {Validator}
    */
-  addMethod(name, method) {
-    if (typeof method === 'function') {
-      this[name] = method;
-    }
+  addMethods(methods) {
+    Object.assign(this, methods);
     return this;
   }
 
   /**
    * 移除验证方法
-   * @param name
+   * @param names
    * @return {Validator}
    */
-  removeMethod(name) {
-    delete this[name];
+  removeMethods(...names) {
+    names.forEach(name => delete this[name]);
     return this;
   }
 

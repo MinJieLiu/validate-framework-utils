@@ -228,7 +228,7 @@ describe('validator测试', () => {
     expect(v.lessThanDate('2021-2-01', '2020-14-02')).to.be.true;
   });
 
-  it('验证 validator 组件', () => {
+  it('验证 validator 方法组件', () => {
     const emailField = {
       rules: 'required | isEmail | maxLength(32)',
       messages: '不能为空 | 请输入合法邮箱 | 不能超过 {{param}} 个字符',
@@ -254,9 +254,9 @@ describe('validator测试', () => {
       value: '123@1231231231231231231231231.com',
     }).result).to.be.false;
     expect(v.validateByField({
-      ...emailField,
-      value: '123@1231231231231231231231231.com',
-    }).error.message === '不能超过 32 个字符').to.be.true;
+        ...emailField,
+        value: '123@1231231231231231231231231.com',
+      }).error.message === '不能超过 32 个字符').to.be.true;
     const phoneFiled = {
       rules: 'isPhone',
       messages: '请输入正确的手机号',
@@ -278,9 +278,9 @@ describe('validator测试', () => {
       value: [],
     }).result).to.be.false;
     expect(v.validateByField({
-      ...hobbyField,
-      value: [],
-    }).error.message === '不能为空').to.be.true;
+        ...hobbyField,
+        value: [],
+      }).error.message === '不能为空').to.be.true;
     expect(v.validateByField({
       ...hobbyField,
       value: '',
@@ -290,12 +290,12 @@ describe('validator测试', () => {
       value: ['1'],
     }).result).to.be.true;
     expect(v.validateByField({
-      ...hobbyField,
-      value: ['1'],
-    }).error.message === undefined).to.be.true;
+        ...hobbyField,
+        value: ['1'],
+      }).error.message === undefined).to.be.true;
   });
 
-  it('验证 Validator 组件', () => {
+  it('验证 Validator 实例组件', () => {
     const validator = new V();
     const emailField = {
       rules: 'required | isEmail | maxLength(32)',
@@ -309,8 +309,19 @@ describe('validator测试', () => {
       ...emailField,
       value: '',
     }).result).to.be.false;
-    validator.addMethod('limitSelect', (field, param) => {
-      return field.value.length <= param;
+    validator.removeMethods('isEmail', 'maxLength');
+    expect(validator.validateByField({
+      ...emailField,
+      value: '123#123.com',
+    }).result).to.be.true;
+    expect(validator.validateByField({
+      ...emailField,
+      value: '123@123.com1111111111111111111111',
+    }).result).to.be.true;
+    validator.addMethods({
+      limitSelect(field, param) {
+        return field.value.length <= param;
+      },
     });
     const hobbyField = {
       rules: 'limitSelect(2)',
