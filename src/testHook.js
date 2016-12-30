@@ -5,56 +5,56 @@ import {
 } from './util';
 
 /**
- * 验证方法类
+ * 验证方法
  */
 export default {
 
-  // 验证自然数
+  // 自然数
   isNumeric(field) {
     return regex.numeric.test(getValue(field));
   },
 
-  // 验证整数
+  // 整数
   isInteger(field) {
     return regex.integer.test(getValue(field));
   },
 
-  // 验证浮点数
+  // 浮点数
   isDecimal(field) {
     return regex.decimal.test(getValue(field));
   },
 
-  // 验证邮箱
+  // 邮箱
   isEmail(field) {
     return regex.email.test(getValue(field));
   },
 
-  // 验证 IP 地址
+  // IP 地址
   isIp(field) {
     return regex.ip.test(getValue(field));
   },
 
-  // 验证座机
+  // 座机
   isTel(field) {
     return regex.tel.test(getValue(field));
   },
 
-  // 验证手机
+  // 手机
   isPhone(field) {
     return regex.phone.test(getValue(field));
   },
 
-  // 验证字母数字下划线
+  // 字母数字下划线
   isAbc(field) {
     return regex.abc.test(getValue(field));
   },
 
-  // 验证URL
+  // URL
   isUrl(field) {
     return regex.url.test(getValue(field));
   },
 
-  // 验证日期
+  // 日期
   isDate(field) {
     // 解析日期
     let thatDate = getValue(field);
@@ -69,7 +69,7 @@ export default {
       }
 
       const numDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-      // 闰年2月29号
+      // 闰年 2 月 29 号
       if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
         numDays[1] = 29;
       }
@@ -90,7 +90,7 @@ export default {
     return field.value !== null && field.value !== '';
   },
 
-  // 多于 某个数
+  // 大于某个数
   greaterThan(field, param) {
     const value = getValue(field);
     if (!regex.decimal.test(value)) {
@@ -99,7 +99,7 @@ export default {
     return (parseFloat(value) > parseFloat(param));
   },
 
-  // 少于 某个数
+  // 小于某个数
   lessThan(field, param) {
     const value = getValue(field);
     if (!regex.decimal.test(value)) {

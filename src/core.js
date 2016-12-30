@@ -14,17 +14,17 @@ export default function (field) {
   const rules = field.rules.split(/\s*\|\s*/g);
 
   rules.forEach((rule, index) => {
-    // 逐条验证，如果已经验证失败，则不需要进入当前条目再次验证
+    // 标识不通过，则不继续验证该规则
     if (!result) {
       return;
     }
 
-    // 转换如：maxLength(12) => ['maxLength', 12]
+    // 转换：maxLength(12) => ['maxLength', 12]
     const parts = /^(.+?)\((.+)\)$/.exec(rule);
     let method = rule;
     let param = '';
 
-    // 解析带参数的验证如 max_length(12)
+    // 解析带参数的验证如 maxLength(12)
     if (parts) {
       method = parts[1];
       param = parts[2];
@@ -48,12 +48,11 @@ export default function (field) {
       rule: method,
     };
 
-    // 解析错误信息
+    // 验证不通过，解析错误信息
     if (!result) {
       // 错误提示
       error.message = (() => {
         const seqText = field.messages ? field.messages.split(/\s*\|\s*/g)[index] : '';
-
         // 替换 {{value}} 和 {{param}} 为指定值
         return seqText
           ? seqText.replace(/\{\{\s*value\s*}}/g, field.value).replace(/\{\{\s*param\s*}}/g, param)
