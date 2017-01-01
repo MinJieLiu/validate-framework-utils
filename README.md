@@ -26,8 +26,11 @@ const { result, error } = validator.validateByField(field);
 
 // ...
 
+```
+
 > global.js
 
+```js
 import validator from 'validate-framework-utils/global';
 
 // ...
