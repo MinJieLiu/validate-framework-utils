@@ -6,12 +6,17 @@
 export default function (field) {
   // 成功标识
   let result = true;
-  let error = null;
-
-  const isRequired = field.rules.includes('required');
-  const isEmpty = field.value === undefined || field.value === null || field.value === '';
+  // 错误信息域
+  const error = {
+    id: field.id,
+    name: field.name,
+    value: field.value,
+  };
 
   const rules = field.rules.split(/\s*\|\s*/g);
+
+  const isRequired = rules.some(rule => rule === 'required');
+  const isEmpty = field.value === undefined || field.value === null || field.value === '';
 
   rules.forEach((rule, index) => {
     // 标识不通过，则不继续验证该规则
@@ -30,7 +35,7 @@ export default function (field) {
       param = parts[2];
     }
 
-    // 如果该规则为 required，并且该值为空，则不验证
+    // 信息域规则中没有包含 required，并且该值为空，则不验证
     const jumpRule = !isRequired && isEmpty;
 
     // 匹配验证
@@ -40,24 +45,18 @@ export default function (field) {
       }
     }
 
-    // 错误信息域
-    error = {
-      id: field.id,
-      name: field.name,
-      value: field.value,
-      rule: method,
-    };
-
     // 验证不通过，解析错误信息
     if (!result) {
-      // 错误提示
-      error.message = (() => {
-        const seqText = field.messages ? field.messages.split(/\s*\|\s*/g)[index] : '';
-        // 替换 {{value}} 和 {{param}} 为指定值
-        return seqText
-          ? seqText.replace(/\{\{\s*value\s*}}/g, field.value).replace(/\{\{\s*param\s*}}/g, param)
-          : seqText;
-      })();
+      Object.assign(error, {
+        rule: method,
+        message: (() => {
+          const seqText = field.messages ? field.messages.split(/\s*\|\s*/g)[index] : '';
+          // 替换 {{value}} 和 {{param}} 中参数
+          return seqText
+            ? seqText.replace(/\{\{\s*value\s*}}/g, field.value).replace(/\{\{\s*param\s*}}/g, param)
+            : seqText;
+        })(),
+      });
     }
   });
 
