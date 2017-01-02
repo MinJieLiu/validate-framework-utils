@@ -1,13 +1,13 @@
 {
   "name": "validate-framework-utils",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Some utils are used for validation.",
   "main": "lib/index.js",
   "scripts": {
     "clean": "rimraf lib",
     "lint": "eslint src --fix",
     "deploy": "npm run clean && babel src --out-dir lib --source-maps --extensions .js --copy-files",
-    "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js"
+    "test": "mocha --compilers js:babel-core/register --colors ./test/*.spec.js"
   },
   "repository": {
     "type": "git",
