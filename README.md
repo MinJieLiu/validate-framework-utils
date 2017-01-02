@@ -2,6 +2,10 @@
 
 Some utils are used for validation
 
+[![npm](https://img.shields.io/npm/v/validate-framework-utils.svg?style=flat-square)]()
+[![Travis](https://img.shields.io/travis/MinJieLiu/validate-framework-utils.svg?style=flat-square)]()
+[![npm](https://img.shields.io/npm/dt/validate-framework-utils.svg?style=flat-square)]()
+
 ## How to use?
 
     npm i validate-framework-utils --save

@@ -1,6 +1,6 @@
 {
   "name": "validate-framework-utils",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "description": "Some utils are used for validation.",
   "main": "lib/index.js",
   "scripts": {
