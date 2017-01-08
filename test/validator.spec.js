@@ -318,26 +318,52 @@ describe('validator测试', () => {
       ...emailField,
       value: '123@123.com1111111111111111111111',
     }).result).to.be.true;
-    validator.addMethods({
-      limitSelect(field, param) {
-        return field.value.length <= param;
-      },
-    });
+
     const hobbyField = {
       rules: 'limitSelect(2)',
       messages: '不能超过 {{param}} 个',
     };
-    expect(validator.validateByField({
-      ...hobbyField,
+    validator.addMethods({
+      limitSelect(field, param) {
+        return field.value.length <= param;
+      },
+      // 两个字段必填其一
+      requiredHobby(field) {
+        return this.required(field) || this.required(hobbyField);
+      },
+    });
+    expect(validator.validateByField(Object.assign(hobbyField, {
       value: [1, 2],
-    }).result).to.be.true;
-    expect(validator.validateByField({
-      ...hobbyField,
+    })).result).to.be.true;
+    expect(validator.validateByField(Object.assign(hobbyField, {
       value: [1, 2, 3],
-    }).result).to.be.false;
-    expect(validator.validateByField({
-        ...hobbyField,
+    })).result).to.be.false;
+    expect(validator.validateByField(Object.assign(hobbyField, {
         value: [1, 2, 3],
-      }).error.message === '不能超过 2 个').to.be.true;
+      })).error.message === '不能超过 2 个').to.be.true;
+
+    /**
+     * 必填其一测试
+     */
+    const loveField = {
+      rules: 'requiredHobby | isUrl',
+      messages: 'hobby 和 love 必填其一 | 请输入链接地址',
+    };
+    // 无值测试
+    hobbyField.value = [];
+    expect(validator.validateByField(Object.assign(loveField, {
+      value: '',
+    })).result).to.be.false;
+    expect(validator.validateByField(Object.assign(loveField, {
+      value: '123',
+    })).result).to.be.false;
+    expect(validator.validateByField(Object.assign(loveField, {
+      value: 'http://123',
+    })).result).to.be.true;
+    // 有值测试
+    hobbyField.value = [1, 2];
+    expect(validator.validateByField(Object.assign(loveField, {
+      value: '',
+    })).result).to.be.true;
   });
 });

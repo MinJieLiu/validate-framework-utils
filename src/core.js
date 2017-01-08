@@ -35,8 +35,8 @@ export default function (field) {
       param = parts[2];
     }
 
-    // 信息域规则中没有包含 required，并且该值为空，则不验证
-    const jumpRule = !isRequired && isEmpty;
+    // 整体规则中没有 required，并且该值为空，并且不以 required 开头，则不验证
+    const jumpRule = !isRequired && isEmpty && method.indexOf('required') !== 0;
 
     // 匹配验证
     if (typeof this[method] === 'function' && !jumpRule) {

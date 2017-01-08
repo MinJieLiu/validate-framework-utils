@@ -10,17 +10,15 @@ Some utils are used for validation
 
     npm i validate-framework-utils --save
 
-> Validator.js
-
 ```js
 import Validator from 'validate-framework-utils';
 
 const validator = new Validator();
 
 const field = {
-  rules: 'required',
-  messages: 'Can not be empty!',
-  value: '',
+  rules: 'required | isEmail | maxLength(32)',
+  messages: 'Can not be empty! | Please enter a valid email address. | Can not exceed {{param}} characters.',
+  value: 'example@example.com',
 };
 
 // `result` is the verification result
@@ -29,18 +27,48 @@ const field = {
 const { result, error } = validator.validateByField(field);
 
 // ...
-
 ```
 
-> global.js
+The field:
+
+ * `rules` One or more rules (separated by | separated)
+ * `messages` One or more messages (separated by | separated). {{Value}} is the value, and {{param}} is a parameter of like `maxLength(32)`
+ * `value` The value to use for validation
+
+### Customize the validation method
+
+Required the validation method begins with `required`
 
 ```js
-import validator from 'validate-framework-utils/global';
-
-// ...
-
-const { result, error } = validator.validateByField(field);
-
-// ...
-
+validator.addMethods({
+  limitSelect(field, param) {
+    return field.value.length <= param;
+  },
+});
 ```
+
+## API
+
+ * addMethods(methods)
+ * removeMethods(...names)
+ * validateByField(field)
+
+## Built-in validation method
+
+ * required
+ * isAbc
+ * isDate
+ * isDecimal
+ * isEmail
+ * isInteger
+ * isIp
+ * isNumeric
+ * isPhone
+ * isTel
+ * isUrl
+ * maxLength(length)
+ * minLength(length)
+ * greaterThan(param)
+ * lessThan(param)
+ * greaterThanDate(date)
+ * lessThanDate(date)
