@@ -4,7 +4,7 @@
  * @return {String}
  */
 export function getValue(field) {
-  return (typeof field === 'object') ? field.value : field;
+  return typeof field === 'object' ? field.value : field;
 }
 
 /**

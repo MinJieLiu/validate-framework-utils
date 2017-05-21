@@ -24,7 +24,7 @@ const field = {
 // `result` is the verification result
 // `error` contains the error message
 
-const { result, error } = validator.validateByField(field);
+const { result, error } = await validator.validateByField(field);
 
 // ...
 ```
