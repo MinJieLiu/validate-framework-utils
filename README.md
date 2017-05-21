@@ -44,6 +44,9 @@ validator.addMethods({
   limitSelect(field, param) {
     return field.value.length <= param;
   },
+  async limitSelect(field, param) {
+    return await doServerAPI();
+  },
 });
 ```
 
@@ -51,7 +54,7 @@ validator.addMethods({
 
  * addMethods(methods)
  * removeMethods(...names)
- * validateByField(field)
+ * validateByField(field) @return Promise
 
 ## Built-in validation method
 

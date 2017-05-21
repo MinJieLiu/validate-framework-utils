@@ -1,4 +1,5 @@
 import chai from 'chai';
+import 'babel-polyfill';
 import V from '../src';
 import v from '../src/global';
 
@@ -228,96 +229,96 @@ describe('validator测试', () => {
     expect(v.lessThanDate('2021-2-01', '2020-14-02')).to.be.true;
   });
 
-  it('验证 validator 方法组件', () => {
+  it('验证 validator 方法组件', async () => {
     const emailField = {
       rules: 'required | isEmail | maxLength(32)',
       messages: '不能为空 | 请输入合法邮箱 | 不能超过 {{param}} 个字符',
     };
-    expect(v.validateByField({
+    expect((await v.validateByField({
       ...emailField,
       value: '123@123.com',
-    }).result).to.be.true;
-    expect(v.validateByField({
+    })).result).to.be.true;
+    expect((await v.validateByField({
       ...emailField,
       value: null,
-    }).result).to.be.false;
-    expect(v.validateByField({
+    })).result).to.be.false;
+    expect((await v.validateByField({
       ...emailField,
       value: '',
-    }).result).to.be.false;
-    expect(v.validateByField({
+    })).result).to.be.false;
+    expect((await v.validateByField({
       ...emailField,
       value: '123#123.com',
-    }).result).to.be.false;
-    expect(v.validateByField({
+    })).result).to.be.false;
+    expect((await v.validateByField({
       ...emailField,
       value: '123@1231231231231231231231231.com',
-    }).result).to.be.false;
-    expect(v.validateByField({
+    })).result).to.be.false;
+    expect((await v.validateByField({
         ...emailField,
         value: '123@1231231231231231231231231.com',
-      }).error.message === '不能超过 32 个字符').to.be.true;
+      })).error.message === '不能超过 32 个字符').to.be.true;
     const phoneFiled = {
       rules: 'isPhone',
       messages: '请输入正确的手机号',
     };
-    expect(v.validateByField({
+    expect((await v.validateByField({
       ...phoneFiled,
       value: '13333333333',
-    }).result).to.be.true;
-    expect(v.validateByField({
+    })).result).to.be.true;
+    expect((await v.validateByField({
       ...phoneFiled,
       value: '',
-    }).result).to.be.true;
+    })).result).to.be.true;
     const hobbyField = {
       rules: 'required',
       messages: '不能为空',
     };
-    expect(v.validateByField({
+    expect((await v.validateByField({
       ...hobbyField,
       value: [],
-    }).result).to.be.false;
-    expect(v.validateByField({
+    })).result).to.be.false;
+    expect((await v.validateByField({
         ...hobbyField,
         value: [],
-      }).error.message === '不能为空').to.be.true;
-    expect(v.validateByField({
+      })).error.message === '不能为空').to.be.true;
+    expect((await v.validateByField({
       ...hobbyField,
       value: '',
-    }).result).to.be.false;
-    expect(v.validateByField({
+    })).result).to.be.false;
+    expect((await v.validateByField({
       ...hobbyField,
       value: ['1'],
-    }).result).to.be.true;
-    expect(v.validateByField({
+    })).result).to.be.true;
+    expect((await v.validateByField({
         ...hobbyField,
         value: ['1'],
-      }).error.message === undefined).to.be.true;
+      })).error.message === undefined).to.be.true;
   });
 
-  it('验证 Validator 实例组件', () => {
+  it('验证 Validator 实例组件', async () => {
     const validator = new V();
     const emailField = {
       rules: 'required | isEmail | maxLength(32)',
       messages: '不能为空 | 请输入合法邮箱 | 不能超过 {{param}} 个字符',
     };
-    expect(validator.validateByField({
+    expect((await validator.validateByField({
       ...emailField,
       value: '123@123.com',
-    }).result).to.be.true;
-    expect(validator.validateByField({
+    })).result).to.be.true;
+    expect((await validator.validateByField({
       ...emailField,
       value: '',
-    }).result).to.be.false;
+    })).result).to.be.false;
     validator.removeMethods('isEmail', 'maxLength');
-    expect(validator.validateByField({
+    expect((await validator.validateByField({
       ...emailField,
       value: '123#123.com',
-    }).result).to.be.true;
-    expect(validator.validateByField({
+    })).result).to.be.true;
+    expect((await validator.validateByField({
       ...emailField,
       value: '123@123.com1111111111111111111111',
-    }).result).to.be.true;
+    })).result).to.be.true;
 
     const hobbyField = {
       rules: 'limitSelect(2)',
@@ -332,15 +333,15 @@ describe('validator测试', () => {
         return this.required(field) || this.required(hobbyField);
       },
     });
-    expect(validator.validateByField(Object.assign(hobbyField, {
+    expect((await validator.validateByField(Object.assign(hobbyField, {
       value: [1, 2],
-    })).result).to.be.true;
-    expect(validator.validateByField(Object.assign(hobbyField, {
+    }))).result).to.be.true;
+    expect((await validator.validateByField(Object.assign(hobbyField, {
       value: [1, 2, 3],
-    })).result).to.be.false;
-    expect(validator.validateByField(Object.assign(hobbyField, {
+    }))).result).to.be.false;
+    expect((await validator.validateByField(Object.assign(hobbyField, {
         value: [1, 2, 3],
-      })).error.message === '不能超过 2 个').to.be.true;
+      }))).error.message === '不能超过 2 个').to.be.true;
 
     /**
      * 必填其一测试
@@ -351,19 +352,19 @@ describe('validator测试', () => {
     };
     // 无值测试
     hobbyField.value = [];
-    expect(validator.validateByField(Object.assign(loveField, {
+    expect((await validator.validateByField(Object.assign(loveField, {
       value: '',
-    })).result).to.be.false;
-    expect(validator.validateByField(Object.assign(loveField, {
+    }))).result).to.be.false;
+    expect((await validator.validateByField(Object.assign(loveField, {
       value: '123',
-    })).result).to.be.false;
-    expect(validator.validateByField(Object.assign(loveField, {
+    }))).result).to.be.false;
+    expect((await validator.validateByField(Object.assign(loveField, {
       value: 'http://123',
-    })).result).to.be.true;
+    }))).result).to.be.true;
     // 有值测试
     hobbyField.value = [1, 2];
-    expect(validator.validateByField(Object.assign(loveField, {
+    expect((await validator.validateByField(Object.assign(loveField, {
       value: '',
-    })).result).to.be.true;
+    }))).result).to.be.true;
   });
 });

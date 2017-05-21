@@ -6,7 +6,9 @@ import validateByField from './core';
  */
 const validator = {
   ...testHook,
-  validateByField: field => validateByField.call(validator, field),
+  validateByField(field) {
+    return validateByField.call(validator, field);
+  },
 };
 
 export default validator;
