@@ -87,7 +87,7 @@ export default {
     } else if (Array.isArray(field.value)) {
       return field.value.length;
     }
-    return field.value !== null && field.value !== '';
+    return field.value !== null && field.value !== undefined && field.value !== '';
   },
 
   // 大于某个数
