@@ -2,7 +2,11 @@ import regex from './regex';
 import {
   getValue,
   parseToDate,
+  isEmpty,
 } from './util';
+
+// 验证
+export const hookTest = (type, field) => regex[type].test(getValue(field));
 
 /**
  * 验证方法
@@ -11,47 +15,47 @@ export default {
 
   // 自然数
   isNumeric(field) {
-    return regex.numeric.test(getValue(field));
+    return hookTest('numeric', field);
   },
 
   // 整数
   isInteger(field) {
-    return regex.integer.test(getValue(field));
+    return hookTest('integer', field);
   },
 
   // 浮点数
   isDecimal(field) {
-    return regex.decimal.test(getValue(field));
+    return hookTest('decimal', field);
   },
 
   // 邮箱
   isEmail(field) {
-    return regex.email.test(getValue(field));
+    return hookTest('email', field);
   },
 
   // IP 地址
   isIp(field) {
-    return regex.ip.test(getValue(field));
+    return hookTest('ip', field);
   },
 
   // 座机
   isTel(field) {
-    return regex.tel.test(getValue(field));
+    return hookTest('tel', field);
   },
 
   // 手机
   isPhone(field) {
-    return regex.phone.test(getValue(field));
+    return hookTest('phone', field);
   },
 
   // 字母数字下划线
   isAbc(field) {
-    return regex.abc.test(getValue(field));
+    return hookTest('abc', field);
   },
 
   // URL
   isUrl(field) {
-    return regex.url.test(getValue(field));
+    return hookTest('url', field);
   },
 
   // 日期
@@ -82,12 +86,17 @@ export default {
 
   // 是否为必须
   required(field) {
-    if (typeof field === 'string') {
-      return field !== '';
-    } else if (Array.isArray(field.value)) {
-      return field.value.length;
+    // 检查 field 本身
+    if (isEmpty(field)) {
+      return false;
     }
-    return field.value !== null && field.value !== undefined && field.value !== '';
+    if (Array.isArray(field)) {
+      return !!field.length;
+    }
+    if (Array.isArray(field.value)) {
+      return !!field.value.length;
+    }
+    return !isEmpty(getValue(field));
   },
 
   // 大于某个数

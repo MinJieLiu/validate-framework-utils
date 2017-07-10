@@ -14,6 +14,10 @@ describe('validator测试', () => {
     expect(v.required('null')).to.be.true;
     expect(v.required('ss')).to.be.true;
     expect(v.required('\s')).to.be.true;
+    expect(v.required(null)).to.be.false;
+    expect(v.required(undefined)).to.be.false;
+    expect(v.required([])).to.be.false;
+    expect(v.required(['1'])).to.be.true;
   });
 
   it('isNumeric() 自然数 验证', () => {
