@@ -51,15 +51,15 @@ export default async function (field) {
 
     // 验证不通过，解析错误信息
     if (!result) {
+      const seqText = field.messages ? field.messages.split(/\s*\|\s*/g)[index] : '';
+      // 替换 {{value}} 和 {{param}} 中参数
+      const message = seqText
+        ? seqText.replace(/{{\s*value\s*}}/g, value).replace(/{{\s*param\s*}}/g, param)
+        : seqText;
+      // Assign
       Object.assign(error, {
         rule: method,
-        message: (() => {
-          const seqText = field.messages ? field.messages.split(/\s*\|\s*/g)[index] : '';
-          // 替换 {{value}} 和 {{param}} 中参数
-          return seqText
-            ? seqText.replace(/{{\s*value\s*}}/g, value).replace(/{{\s*param\s*}}/g, param)
-            : seqText;
-        })(),
+        message,
       });
     }
   }
