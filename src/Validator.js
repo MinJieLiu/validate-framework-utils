@@ -1,5 +1,5 @@
 import testHook from './testHook';
-import validateByField from './core';
+import validateField from './core';
 
 /**
  * 验证组件
@@ -36,9 +36,9 @@ export default class Validator {
   /**
    * 通过 field 验证
    * @param  {Object} field - 验证信息域
-   * @return {Object} [Promise] - 包含结果、错误信息
+   * @return {Function} [Promise] - 包含结果、错误信息
    */
-  validateByField(field) {
-    return validateByField.call(this, field);
+  validateField(field) {
+    return validateField.call(this, field);
   }
 }

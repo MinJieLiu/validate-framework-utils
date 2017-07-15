@@ -18,14 +18,13 @@ const validator = new Validator();
 const field = {
   rules: 'required | isEmail | maxLength(32)',
   messages: 'Can not be empty! | Please enter a valid email address. | Can not exceed {{param}} characters.',
-  value: 'example@example.com',
 };
 
 const {
   result, // The verification result
   error, // contains the error message
   executedAsyncFunction,
-} = await validator.validateByField(field);
+} = await validator.validateByField(field)('example@example.com');
 
 // ...
 ```
