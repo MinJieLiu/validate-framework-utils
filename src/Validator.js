@@ -11,7 +11,6 @@ export default class Validator {
     Object.assign(this, {
       ...testHook,
     });
-    return this;
   }
 
   /**
@@ -36,8 +35,8 @@ export default class Validator {
 
   /**
    * 通过 field 验证
-   * @param  {Object} field 验证信息域
-   * @return {Object} [Promise] 包含结果、错误信息
+   * @param  {Object} field - 验证信息域
+   * @return {Object} [Promise] - 包含结果、错误信息
    */
   validateByField(field) {
     return validateByField.call(this, field);

@@ -9,6 +9,8 @@ export default async function (field) {
   const { id, name, value } = field;
   // 成功标识
   let result = true;
+  // 是否执行过异步方法
+  let executedAsyncFunction = false;
   // 错误信息域
   const error = {
     id,
@@ -41,31 +43,39 @@ export default async function (field) {
     // 整体规则中没有 required，并且该值为空，并且不以 required 开头，则不验证
     const jumpRule = !isRequired && isEmpty(value) && method.indexOf('required') !== 0;
 
+    // 当前方法
+    const currentMethod = this[method];
     // 匹配验证
-    if (typeof this[method] === 'function' && !jumpRule) {
-      // eslint-disable-next-line no-await-in-loop
-      if (!await this[method].apply(this, [field, param])) {
-        result = false;
+    if (typeof currentMethod === 'function' && !jumpRule) {
+      // Validate
+      const currentResult = currentMethod.apply(this, [field, param]);
+      // 异步方法
+      // babel 中无法使用该判断: Object.getPrototypeOf(currentMethod).constructor.name === 'AsyncFunction'
+      if (typeof currentResult === 'object' && currentResult.then) {
+        executedAsyncFunction = true;
+        // eslint-disable-next-line no-await-in-loop
+        result = await currentResult;
+      } else {
+        result = currentResult;
       }
     }
 
-    // 验证不通过，解析错误信息
+    // 验证不通过，则解析错误信息
     if (!result) {
-      const seqText = field.messages ? field.messages.split(/\s*\|\s*/g)[index] : '';
+      // 当前验证不通过的规则
+      error.rule = method;
+
       // 替换 {{value}} 和 {{param}} 中参数
-      const message = seqText
+      const seqText = field.messages ? field.messages.split(/\s*\|\s*/g)[index] : '';
+      error.message = seqText
         ? seqText.replace(/{{\s*value\s*}}/g, value).replace(/{{\s*param\s*}}/g, param)
         : seqText;
-      // Assign
-      Object.assign(error, {
-        rule: method,
-        message,
-      });
     }
   }
 
   return {
     result,
     error,
+    executedAsyncFunction,
   };
 }

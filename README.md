@@ -8,7 +8,7 @@ Some utils are used for validation
 
 ## How to use?
 
-    npm i validate-framework-utils --save
+    yarn add validate-framework-utils
 
 ```js
 import Validator from 'validate-framework-utils';
@@ -21,10 +21,11 @@ const field = {
   value: 'example@example.com',
 };
 
-// `result` is the verification result
-// `error` contains the error message
-
-const { result, error } = await validator.validateByField(field);
+const {
+  result, // The verification result
+  error, // contains the error message
+  executedAsyncFunction,
+} = await validator.validateByField(field);
 
 // ...
 ```

@@ -1,236 +1,236 @@
-import chai from 'chai';
 import 'babel-polyfill';
-import V from '../src';
-import v from '../src/global';
+import assert from 'assert';
+import { describe, it } from 'mocha';
+import V, { validator as v } from '../src';
 
-chai.expect();
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const expect = chai.expect;
+/* eslint-disable no-unused-expressions */
 
 describe('validator测试', () => {
   it('required() 必填验证', () => {
-    expect(v.required('')).to.be.false;
-    expect(v.required(' ')).to.be.true;
-    expect(v.required('null')).to.be.true;
-    expect(v.required('ss')).to.be.true;
-    expect(v.required('\s')).to.be.true;
-    expect(v.required(null)).to.be.false;
-    expect(v.required(undefined)).to.be.false;
-    expect(v.required([])).to.be.false;
-    expect(v.required(['1'])).to.be.true;
+    assert(!v.required(''));
+    assert((v.required(' ')));
+    assert(v.required('null'));
+    assert(v.required('ss'));
+    assert(v.required(false));
+    assert(!v.required(null));
+    assert(!v.required(undefined));
+    assert(!v.required([]));
+    assert(v.required(['1']));
   });
 
   it('isNumeric() 自然数 验证', () => {
-    expect(v.isNumeric('0000+')).to.be.false;
-    expect(v.isNumeric('0000')).to.be.true;
-    expect(v.isNumeric('1')).to.be.true;
-    expect(v.isNumeric('99999')).to.be.true;
-    expect(v.isNumeric('0')).to.be.true;
-    expect(v.isNumeric('-0')).to.be.false;
-    expect(v.isNumeric('-1')).to.be.false;
-    expect(v.isNumeric('1.1')).to.be.false;
-    expect(v.isNumeric('1.11')).to.be.false;
-    expect(v.isDecimal('NaN')).to.be.false;
+    assert(!v.isNumeric('0000+'));
+    assert(v.isNumeric('0000'));
+    assert(v.isNumeric('1'));
+    assert(v.isNumeric('99999'));
+    assert(v.isNumeric('0'));
+    assert(!v.isNumeric('-0'));
+    assert(!v.isNumeric('-1'));
+    assert(!v.isNumeric('1.1'));
+    assert(!v.isNumeric('1.11'));
+    assert(!v.isDecimal('NaN'));
   });
 
   it('isInteger() 整数 验证', () => {
-    expect(v.isInteger('0000+')).to.be.false;
-    expect(v.isInteger('0000')).to.be.true;
-    expect(v.isInteger('1')).to.be.true;
-    expect(v.isInteger('99999')).to.be.true;
-    expect(v.isInteger('0')).to.be.true;
-    expect(v.isInteger('-0')).to.be.true;
-    expect(v.isInteger('-1')).to.be.true;
-    expect(v.isInteger('-1.1')).to.be.false;
-    expect(v.isInteger('1.00001')).to.be.false;
-    expect(v.isInteger('1.11111')).to.be.false;
-    expect(v.isDecimal('NaN')).to.be.false;
+    assert(!v.isInteger('0000+'));
+    assert(v.isInteger('0000'));
+    assert(v.isInteger('1'));
+    assert(v.isInteger('99999'));
+    assert(v.isInteger('0'));
+    assert(v.isInteger('-0'));
+    assert(v.isInteger('-1'));
+    assert(!v.isInteger('-1.1'));
+    assert(!v.isInteger('1.00001'));
+    assert(!v.isInteger('1.11111'));
+    assert(!v.isDecimal('NaN'));
   });
 
   it('isDecimal() 浮点数 验证', () => {
-    expect(v.isDecimal('0000+')).to.be.false;
-    expect(v.isDecimal('0000')).to.be.true;
-    expect(v.isDecimal('1')).to.be.true;
-    expect(v.isDecimal('99999')).to.be.true;
-    expect(v.isDecimal('0')).to.be.true;
-    expect(v.isDecimal('-0')).to.be.true;
-    expect(v.isDecimal('-1')).to.be.true;
-    expect(v.isDecimal('1.1')).to.be.true;
-    expect(v.isDecimal('-1.11')).to.be.true;
-    expect(v.isDecimal('-0.11')).to.be.true;
-    expect(v.isDecimal('999.999')).to.be.true;
-    expect(v.isDecimal('.11')).to.be.true;
-    expect(v.isDecimal('0.11')).to.be.true;
-    expect(v.isDecimal('+1.11')).to.be.false;
-    expect(v.isDecimal('NaN')).to.be.false;
+    assert(!v.isDecimal('0000+'));
+    assert(v.isDecimal('0000'));
+    assert(v.isDecimal('1'));
+    assert(v.isDecimal('99999'));
+    assert(v.isDecimal('0'));
+    assert(v.isDecimal('-0'));
+    assert(v.isDecimal('-1'));
+    assert(v.isDecimal('1.1'));
+    assert(v.isDecimal('-1.11'));
+    assert(v.isDecimal('-0.11'));
+    assert(v.isDecimal('999.999'));
+    assert(v.isDecimal('.11'));
+    assert(v.isDecimal('0.11'));
+    assert(!v.isDecimal('+1.11'));
+    assert(!v.isDecimal('NaN'));
   });
 
   it('isUrl() URL 验证', () => {
-    expect(v.isUrl('://www.ss')).to.be.false;
-    expect(v.isUrl('www.baidu.com')).to.be.false;
-    expect(v.isUrl('abs.abs.baidu.com')).to.be.false;
-    expect(v.isUrl('http://baidu.com')).to.be.true;
-    expect(v.isUrl('http:/abs.abs.baidu.com')).to.be.false;
-    expect(v.isUrl('http://abs.abs.baidu.com')).to.be.true;
-    expect(v.isUrl('hps://www.baidu.com')).to.be.true;
-    expect(v.isUrl('hps://www.QQ.com')).to.be.true;
-    expect(v.isUrl('hps://www.Tentent.com')).to.be.true;
-    expect(v.isUrl('hps://')).to.be.true;
+    assert(!v.isUrl('://www.ss'));
+    assert(!v.isUrl('www.baidu.com'));
+    assert(!v.isUrl('abs.abs.baidu.com'));
+    assert(v.isUrl('http://baidu.com'));
+    assert(!v.isUrl('http:/abs.abs.baidu.com'));
+    assert(v.isUrl('http://abs.abs.baidu.com'));
+    assert(v.isUrl('hps://www.baidu.com'));
+    assert(v.isUrl('hps://www.QQ.com'));
+    assert(v.isUrl('hps://www.Tentent.com'));
+    assert(v.isUrl('hps://'));
   });
 
   it('isAbc() 字母数字下划线验证', () => {
-    expect(v.isAbc('086-021')).to.be.false;
-    expect(v.isAbc('086_021')).to.be.true;
-    expect(v.isAbc('abc23')).to.be.true;
-    expect(v.isAbc('abc_23')).to.be.true;
-    expect(v.isAbc('AbC_')).to.be.true;
-    expect(v.isAbc('A!')).to.be.false;
+    assert(!v.isAbc('086-021'));
+    assert(v.isAbc('086_021'));
+    assert(v.isAbc('abc23'));
+    assert(v.isAbc('abc_23'));
+    assert(v.isAbc('AbC_'));
+    assert(!v.isAbc('A!'));
   });
 
   // 邮箱验证 ，暂不匹配中文域名
   it('isEmail() 邮箱验证', () => {
-    expect(v.isEmail('d.s.s.d@qq.com.cn')).to.be.true;
-    expect(v.isEmail('d.s-s.d@qq.com.cn')).to.be.true;
-    expect(v.isEmail('d.s.s.d@qq.cosdfaasdfasdfdsaf.cn.sh.sd.dsfsdfsfd')).to.be.true;
-    expect(v.isEmail('ds.sd@qq.com')).to.be.true;
-    expect(v.isEmail('dss1234.sd@qq.com')).to.be.true;
-    expect(v.isEmail('ds.sd@qq.com.cn')).to.be.true;
-    expect(v.isEmail('@qq.cn')).to.be.false;
-    expect(v.isEmail('saf#qq.cn')).to.be.false;
-    expect(v.isEmail('wowohoo@qq.com')).to.be.true;
-    expect(v.isEmail('wowo.o@qq.com')).to.be.true;
-    expect(v.isEmail('wowo@123.sd')).to.be.true;
-    expect(v.isEmail('wowo@123.23')).to.be.true;
-    expect(v.isEmail('wowo.oqqcom')).to.be.false;
-    expect(v.isEmail('wowo@123')).to.be.true;
-    expect(v.isEmail('wowo@asdf.中国')).to.be.false;
-    expect(v.isEmail('wowo@中国.com')).to.be.false;
-    expect(v.isEmail('中@qq.com')).to.be.false;
-    expect(v.isEmail('Asd@qq.com')).to.be.true;
-    expect(v.isEmail('Asd@QQ.com')).to.be.true;
+    assert(v.isEmail('d.s.s.d@qq.com.cn'));
+    assert(v.isEmail('d.s-s.d@qq.com.cn'));
+    assert(v.isEmail('d.s.s.d@qq.cosdfaasdfasdfdsaf.cn.sh.sd.dsfsdfsfd'));
+    assert(v.isEmail('ds.sd@qq.com'));
+    assert(v.isEmail('dss1234.sd@qq.com'));
+    assert(v.isEmail('ds.sd@qq.com.cn'));
+    assert(!v.isEmail('@qq.cn'));
+    assert(!v.isEmail('saf#qq.cn'));
+    assert(v.isEmail('wowohoo@qq.com'));
+    assert(v.isEmail('wowo.o@qq.com'));
+    assert(v.isEmail('wowo@123.sd'));
+    assert(v.isEmail('wowo@123.23'));
+    assert(!v.isEmail('wowo.oqqcom'));
+    assert(v.isEmail('wowo@123'));
+    assert(!v.isEmail('wowo@asdf.中国'));
+    assert(!v.isEmail('wowo@中国.com'));
+    assert(!v.isEmail('中@qq.com'));
+    assert(v.isEmail('Asd@qq.com'));
+    assert(v.isEmail('Asd@QQ.com'));
   });
 
   it('isIp() IP验证', () => {
-    expect(v.isIp('01.01.01.0')).to.be.true;
-    expect(v.isIp('192.168.1.1')).to.be.true;
-    expect(v.isIp('192.168.23.3')).to.be.true;
-    expect(v.isIp('192.168.23.3.32.1')).to.be.true;
-    expect(v.isIp('192.168.23.3.32')).to.be.false;
-    expect(v.isIp('192.168.23.3.32.1.2')).to.be.false;
-    expect(v.isIp('192.168.23.3.32.1.wq2')).to.be.false;
-    expect(v.isIp('192.168.2.wq2')).to.be.false;
-    expect(v.isIp('192.168.1')).to.be.false;
-    expect(v.isIp('192.168')).to.be.false;
-    expect(v.isIp('192')).to.be.false;
-    expect(v.isIp('192.168.1.1233')).to.be.false;
-    expect(v.isIp('192.168.1324.123')).to.be.false;
+    assert(v.isIp('01.01.01.0'));
+    assert(v.isIp('192.168.1.1'));
+    assert(v.isIp('192.168.23.3'));
+    assert(v.isIp('192.168.23.3.32.1'));
+    assert(!v.isIp('192.168.23.3.32'));
+    assert(!v.isIp('192.168.23.3.32.1.2'));
+    assert(!v.isIp('192.168.23.3.32.1.wq2'));
+    assert(!v.isIp('192.168.2.wq2'));
+    assert(!v.isIp('192.168.1'));
+    assert(!v.isIp('192.168'));
+    assert(!v.isIp('192'));
+    assert(!v.isIp('192.168.1.1233'));
+    assert(!v.isIp('192.168.1324.123'));
   });
 
   it('isPhone() 手机号码验证', () => {
-    expect(v.isPhone('136888898')).to.be.false;
-    expect(v.isPhone('13688889890')).to.be.true;
-    expect(v.isPhone('13012341233')).to.be.true;
-    expect(v.isPhone('13688889890')).to.be.true;
-    expect(v.isPhone('613688889890')).to.be.false;
-    expect(v.isPhone('19088889890')).to.be.true;
+    assert(!v.isPhone('136888898'));
+    assert(v.isPhone('13688889890'));
+    assert(v.isPhone('13012341233'));
+    assert(v.isPhone('13688889890'));
+    assert(!v.isPhone('613688889890'));
+    assert(v.isPhone('19088889890'));
   });
 
   // 国家代码(2到3位)-区号(2到3位)-电话号码(7到8位)-分机号(3位)
   it('isTel() 座机号码验证', () => {
-    expect(v.isTel('086-021-4433432-233')).to.be.true;
-    expect(v.isTel('+086-021-4433432-233')).to.be.true;
-    expect(v.isTel('+086-021-4433432-23')).to.be.false;
-    expect(v.isTel('+086-021-4433432-2333')).to.be.true;
-    expect(v.isTel('+086-021-4433432-1')).to.be.false;
-    expect(v.isTel('13012341233')).to.be.false;
+    assert(v.isTel('086-021-4433432-233'));
+    assert(v.isTel('+086-021-4433432-233'));
+    assert(!v.isTel('+086-021-4433432-23'));
+    assert(v.isTel('+086-021-4433432-2333'));
+    assert(!v.isTel('+086-021-4433432-1'));
+    assert(!v.isTel('13012341233'));
   });
 
   // 2010-10-10格式
   it('isDate() 日期格式验证', () => {
-    expect(v.isDate('2010-10-10')).to.be.true;
-    expect(v.isDate('2010-10-1')).to.be.true;
-    expect(v.isDate('2010-10')).to.be.false;
-    expect(v.isDate('2010-1-10')).to.be.true;
-    expect(v.isDate('2010-01-10')).to.be.true;
-    expect(v.isDate('2010-03-31')).to.be.true;
-    expect(v.isDate('2010-04-30')).to.be.true;
-    expect(v.isDate('2010-04-31')).to.be.false;
-    expect(v.isDate('2010--31')).to.be.false;
-    expect(v.isDate('2010-05-32')).to.be.false;
-    expect(v.isDate('2016-02-29')).to.be.true;
-    expect(v.isDate('2009-02-29')).to.be.false;
-    expect(v.isDate('2009-00-29')).to.be.false;
-    expect(v.isDate('0000-01-29')).to.be.false;
-    expect(v.isDate('2009-01-00')).to.be.false;
-    expect(v.isDate('2010-01-04-31')).to.be.false;
-    expect(v.isDate('2010 - 10 - 10')).to.be.false;
-    expect(v.isDate('2010-13-10')).to.be.false;
-    expect(v.isDate('2010/10/10')).to.be.false;
-    expect(v.isDate('2010/10-10')).to.be.false;
-    expect(v.isDate('201010-10')).to.be.false;
-    expect(v.isDate('20101010')).to.be.false;
-    expect(v.isDate('2010')).to.be.false;
+    assert(v.isDate('2010-10-10'));
+    assert(v.isDate('2010-10-1'));
+    assert(!v.isDate('2010-10'));
+    assert(v.isDate('2010-1-10'));
+    assert(v.isDate('2010-01-10'));
+    assert(v.isDate('2010-03-31'));
+    assert(v.isDate('2010-04-30'));
+    assert(!v.isDate('2010-04-31'));
+    assert(!v.isDate('2010--31'));
+    assert(!v.isDate('2010-05-32'));
+    assert(v.isDate('2016-02-29'));
+    assert(!v.isDate('2009-02-29'));
+    assert(!v.isDate('2009-00-29'));
+    assert(!v.isDate('0000-01-29'));
+    assert(!v.isDate('2009-01-00'));
+    assert(!v.isDate('2010-01-04-31'));
+    assert(!v.isDate('2010 - 10 - 10'));
+    assert(!v.isDate('2010-13-10'));
+    assert(!v.isDate('2010/10/10'));
+    assert(!v.isDate('2010/10-10'));
+    assert(!v.isDate('201010-10'));
+    assert(!v.isDate('20101010'));
+    assert(!v.isDate('2010'));
   });
 
   it('greaterThan() 大于某个数', () => {
-    expect(v.greaterThan('23', '54')).to.be.false;
-    expect(v.greaterThan('23', '11')).to.be.true;
-    expect(v.greaterThan('abc', '11')).to.be.false;
-    expect(v.greaterThan('-11', '0')).to.be.false;
-    expect(v.greaterThan('11', 'abc')).to.be.false;
-    expect(v.greaterThan('11', '11')).to.be.false;
+    assert(!v.greaterThan('23', '54'));
+    assert(v.greaterThan('23', '11'));
+    assert(!v.greaterThan('abc', '11'));
+    assert(!v.greaterThan('-11', '0'));
+    assert(!v.greaterThan('11', 'abc'));
+    assert(!v.greaterThan('11', '11'));
   });
 
   it('lessThan() 小于某个数', () => {
-    expect(v.lessThan('23', '54')).to.be.true;
-    expect(v.lessThan('55', '54')).to.be.false;
-    expect(v.lessThan('abc', '54')).to.be.false;
-    expect(v.lessThan('11', '-1')).to.be.false;
-    expect(v.lessThan('0', '54')).to.be.true;
-    expect(v.lessThan('23', 'abc')).to.be.false;
+    assert(v.lessThan('23', '54'));
+    assert(!v.lessThan('55', '54'));
+    assert(!v.lessThan('abc', '54'));
+    assert(!v.lessThan('11', '-1'));
+    assert(v.lessThan('0', '54'));
+    assert(!v.lessThan('23', 'abc'));
   });
 
   it('maxLength() 最大长度', () => {
-    expect(v.maxLength('23', '0')).to.be.false;
-    expect(v.maxLength('5555555', '7')).to.be.true;
-    expect(v.maxLength('abc', '3')).to.be.true;
-    expect(v.maxLength('111111', '999')).to.be.true;
-    expect(v.maxLength('0', '0')).to.be.false;
-    expect(v.maxLength('2 3', '3')).to.be.true;
-    expect(v.maxLength('2 3', '2')).to.be.false;
+    assert(!v.maxLength('23', '0'));
+    assert(v.maxLength('5555555', '7'));
+    assert(v.maxLength('abc', '3'));
+    assert(v.maxLength('111111', '999'));
+    assert(!v.maxLength('0', '0'));
+    assert(v.maxLength('2 3', '3'));
+    assert(!v.maxLength('2 3', '2'));
   });
 
   it('minLength() 最小长度', () => {
-    expect(v.minLength('23', '0')).to.be.true;
-    expect(v.minLength('55', '1')).to.be.true;
-    expect(v.minLength('55', '2')).to.be.true;
-    expect(v.minLength('abc', '4')).to.be.false;
-    expect(v.minLength('11', '-1')).to.be.true;
-    expect(v.minLength('0 0', '54')).to.be.false;
-    expect(v.minLength('   ', '3')).to.be.true;
-    expect(v.minLength('   ', '4')).to.be.false;
+    assert(v.minLength('23', '0'));
+    assert(v.minLength('55', '1'));
+    assert(v.minLength('55', '2'));
+    assert(!v.minLength('abc', '4'));
+    assert(v.minLength('11', '-1'));
+    assert(!v.minLength('0 0', '54'));
+    assert(v.minLength('   ', '3'));
+    assert(!v.minLength('   ', '4'));
   });
 
   it('greaterThanDate() 大于某个日期', () => {
-    expect(v.greaterThanDate('23', '54')).to.be.false;
-    expect(v.greaterThanDate('2010-10-11', '54')).to.be.false;
-    expect(v.greaterThanDate('2010-01-01', '2010-01-01')).to.be.false;
-    expect(v.greaterThanDate('2010-01-02', '2010-01-01')).to.be.true;
-    expect(v.greaterThanDate('2020-01-02', '2010-01-02')).to.be.true;
-    expect(v.greaterThanDate('2020-01-02', '2020-11-02')).to.be.false;
-    expect(v.greaterThanDate('2020-01-02', '2020-13-02')).to.be.false;
+    assert(!v.greaterThanDate('23', '54'));
+    assert(!v.greaterThanDate('2010-10-11', '54'));
+    assert(!v.greaterThanDate('2010-01-01', '2010-01-01'));
+    assert(v.greaterThanDate('2010-01-02', '2010-01-01'));
+    assert(v.greaterThanDate('2020-01-02', '2010-01-02'));
+    assert(!v.greaterThanDate('2020-01-02', '2020-11-02'));
+    assert(!v.greaterThanDate('2020-01-02', '2020-13-02'));
   });
 
   it('lessThanDate() 小于某个日期', () => {
-    expect(v.lessThanDate('23', '54')).to.be.false;
-    expect(v.lessThanDate('2010-10-11', '54')).to.be.false;
-    expect(v.lessThanDate('2010-01-01', '2010-01-01')).to.be.false;
-    expect(v.lessThanDate('2010-01-02', '2010-01-01')).to.be.false;
-    expect(v.lessThanDate('2020-01-02', '2010-01-02')).to.be.false;
-    expect(v.lessThanDate('2020-01-02', '2020-11-02')).to.be.true;
-    expect(v.lessThanDate('2020-01-02', '2020-13-02')).to.be.true;
-    expect(v.lessThanDate('2020-21-02', '2022-1-02')).to.be.true;
-    expect(v.lessThanDate('2021-2-01', '2020-14-02')).to.be.true;
+    assert(!v.lessThanDate('23', '54'));
+    assert(!v.lessThanDate('2010-10-11', '54'));
+    assert(!v.lessThanDate('2010-01-01', '2010-01-01'));
+    assert(!v.lessThanDate('2010-01-02', '2010-01-01'));
+    assert(!v.lessThanDate('2020-01-02', '2010-01-02'));
+    assert(v.lessThanDate('2020-01-02', '2020-11-02'));
+    assert(v.lessThanDate('2020-01-02', '2020-13-02'));
+    assert(v.lessThanDate('2020-21-02', '2022-1-02'));
+    assert(v.lessThanDate('2021-2-01', '2020-14-02'));
   });
 
   it('验证 validator 方法组件', async () => {
@@ -238,66 +238,69 @@ describe('validator测试', () => {
       rules: 'required | isEmail | maxLength(32)',
       messages: '不能为空 | 请输入合法邮箱 | 不能超过 {{param}} 个字符',
     };
-    expect((await v.validateByField({
+    assert((await v.validateByField({
       ...emailField,
       value: '123@123.com',
-    })).result).to.be.true;
-    expect((await v.validateByField({
+    })).result);
+    assert(!(await v.validateByField({
       ...emailField,
       value: null,
-    })).result).to.be.false;
-    expect((await v.validateByField({
+    })).result);
+    assert(!(await v.validateByField({
       ...emailField,
       value: '',
-    })).result).to.be.false;
-    expect((await v.validateByField({
+    })).result);
+    assert(!(await v.validateByField({
       ...emailField,
       value: '123#123.com',
-    })).result).to.be.false;
-    expect((await v.validateByField({
+    })).result);
+    assert(!(await v.validateByField({
       ...emailField,
       value: '123@1231231231231231231231231.com',
-    })).result).to.be.false;
-    expect((await v.validateByField({
+    })).result);
+    assert(
+      (await v.validateByField({
         ...emailField,
         value: '123@1231231231231231231231231.com',
-      })).error.message === '不能超过 32 个字符').to.be.true;
+      })).error.message === '不能超过 32 个字符');
     const phoneFiled = {
       rules: 'isPhone',
       messages: '请输入正确的手机号',
     };
-    expect((await v.validateByField({
+    assert((await v.validateByField({
       ...phoneFiled,
       value: '13333333333',
-    })).result).to.be.true;
-    expect((await v.validateByField({
+    })).result);
+    assert((await v.validateByField({
       ...phoneFiled,
       value: '',
-    })).result).to.be.true;
+    })).result);
     const hobbyField = {
       rules: 'required',
       messages: '不能为空',
     };
-    expect((await v.validateByField({
+    assert(!(await v.validateByField({
       ...hobbyField,
       value: [],
-    })).result).to.be.false;
-    expect((await v.validateByField({
+    })).result);
+    assert(
+      (await v.validateByField({
         ...hobbyField,
         value: [],
-      })).error.message === '不能为空').to.be.true;
-    expect((await v.validateByField({
+      })).error.message === '不能为空');
+    assert(!(await v.validateByField({
       ...hobbyField,
       value: '',
-    })).result).to.be.false;
-    expect((await v.validateByField({
+    })).result);
+    assert((await v.validateByField({
       ...hobbyField,
       value: ['1'],
-    })).result).to.be.true;
-    expect((await v.validateByField({
+    })).result);
+    assert(
+      (await v.validateByField({
         ...hobbyField,
         value: ['1'],
-      })).error.message === undefined).to.be.true;
+      })).error.message === undefined);
   });
 
   it('验证 Validator 实例组件', async () => {
@@ -306,23 +309,23 @@ describe('validator测试', () => {
       rules: 'required | isEmail | maxLength(32)',
       messages: '不能为空 | 请输入合法邮箱 | 不能超过 {{param}} 个字符',
     };
-    expect((await validator.validateByField({
+    assert((await validator.validateByField({
       ...emailField,
       value: '123@123.com',
-    })).result).to.be.true;
-    expect((await validator.validateByField({
+    })).result);
+    assert(!(await validator.validateByField({
       ...emailField,
       value: '',
-    })).result).to.be.false;
+    })).result);
     validator.removeMethods('isEmail', 'maxLength');
-    expect((await validator.validateByField({
+    assert((await validator.validateByField({
       ...emailField,
       value: '123#123.com',
-    })).result).to.be.true;
-    expect((await validator.validateByField({
+    })).result);
+    assert((await validator.validateByField({
       ...emailField,
       value: '123@123.com1111111111111111111111',
-    })).result).to.be.true;
+    })).result);
 
     const hobbyField = {
       rules: 'limitSelect(2)',
@@ -337,15 +340,16 @@ describe('validator测试', () => {
         return this.required(field) || this.required(hobbyField);
       },
     });
-    expect((await validator.validateByField(Object.assign(hobbyField, {
+    assert((await validator.validateByField(Object.assign(hobbyField, {
       value: [1, 2],
-    }))).result).to.be.true;
-    expect((await validator.validateByField(Object.assign(hobbyField, {
+    }))).result);
+    assert(!(await validator.validateByField(Object.assign(hobbyField, {
       value: [1, 2, 3],
-    }))).result).to.be.false;
-    expect((await validator.validateByField(Object.assign(hobbyField, {
+    }))).result);
+    assert(
+      (await validator.validateByField(Object.assign(hobbyField, {
         value: [1, 2, 3],
-      }))).error.message === '不能超过 2 个').to.be.true;
+      }))).error.message === '不能超过 2 个');
 
     /**
      * 必填其一测试
@@ -356,19 +360,46 @@ describe('validator测试', () => {
     };
     // 无值测试
     hobbyField.value = [];
-    expect((await validator.validateByField(Object.assign(loveField, {
+    assert(!(await validator.validateByField(Object.assign(loveField, {
       value: '',
-    }))).result).to.be.false;
-    expect((await validator.validateByField(Object.assign(loveField, {
+    }))).result);
+    assert(!(await validator.validateByField(Object.assign(loveField, {
       value: '123',
-    }))).result).to.be.false;
-    expect((await validator.validateByField(Object.assign(loveField, {
+    }))).result);
+    assert((await validator.validateByField(Object.assign(loveField, {
       value: 'http://123',
-    }))).result).to.be.true;
+    }))).result);
     // 有值测试
     hobbyField.value = [1, 2];
-    expect((await validator.validateByField(Object.assign(loveField, {
+    assert((await validator.validateByField(Object.assign(loveField, {
       value: '',
-    }))).result).to.be.true;
+    }))).result);
+  });
+
+  it('验证 validator 异步方法', async () => {
+    const validator = new V();
+    const emailField = {
+      rules: 'isNumeric | doApi',
+      messages: '只能为数字 | 长度不小于10',
+    };
+    validator.addMethods({
+      async doApi(field) {
+        await sleep(20);
+        return field.value.length >= 10;
+      },
+    });
+    assert(!(await validator.validateByField(Object.assign(emailField, {
+      value: 'abc',
+    }))).executedAsyncFunction);
+    assert(
+      (await validator.validateByField(Object.assign(emailField, {
+        value: '123456789',
+      }))).error.message === '长度不小于10');
+
+    const currentResult = await validator.validateByField(Object.assign(emailField, {
+      value: '1234567890',
+    }));
+    assert(currentResult.executedAsyncFunction);
+    assert(currentResult.result);
   });
 });
