@@ -5,8 +5,6 @@ import V, { validator as v } from '../src';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-/* eslint-disable no-unused-expressions */
-
 describe('validator测试', () => {
   it('required() 必填验证', () => {
     assert(!v.required(''));
