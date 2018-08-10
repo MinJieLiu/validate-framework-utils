@@ -23,7 +23,6 @@ const field = {
 const {
   result, // The verification result
   error, // contains the error message
-  executedAsyncFunction,
 } = await validator.validateByField(field)('example@example.com');
 
 // ...

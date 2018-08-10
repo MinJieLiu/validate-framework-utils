@@ -300,11 +300,9 @@ describe('validator测试', () => {
         return field.value.length >= 10;
       },
     });
-    assert(!(await validateAsyncField('abc')).executedAsyncFunction);
     assert((await validateAsyncField('123456789')).error.message === '长度不小于10');
 
     const currentResult = await validateAsyncField('1234567890');
-    assert(currentResult.executedAsyncFunction);
     assert(currentResult.result);
   });
 });

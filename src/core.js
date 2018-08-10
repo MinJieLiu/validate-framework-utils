@@ -14,8 +14,6 @@ export default function (field) {
   return async (value) => {
     // 成功标识
     let result = true;
-    // 是否执行过异步方法
-    let executedAsyncFunction = false;
     // 错误信息域
     const error = {
       id,
@@ -51,16 +49,8 @@ export default function (field) {
       // 匹配验证
       if (typeof currentMethod === 'function' && !jumpRule) {
         // Validate
-        const currentResult = currentMethod.apply(this, [field, param]);
-        // 异步方法
-        // babel 中无法使用该判断: Object.getPrototypeOf(currentMethod).constructor.name === 'AsyncFunction'
-        if (typeof currentResult === 'object' && currentResult.then) {
-          executedAsyncFunction = true;
-          // eslint-disable-next-line no-await-in-loop
-          result = await currentResult;
-        } else {
-          result = currentResult;
-        }
+        // eslint-disable-next-line no-await-in-loop
+        result = await currentMethod.apply(this, [field, param]);
       }
 
       // 验证不通过，则解析错误信息
@@ -79,7 +69,6 @@ export default function (field) {
     return {
       result,
       error,
-      executedAsyncFunction,
     };
   };
 }
