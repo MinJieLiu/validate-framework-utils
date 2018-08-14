@@ -11,9 +11,11 @@ export default function (field) {
   const rules = field.rules.split(/\s*\|\s*/g);
   const isRequired = rules.some(rule => rule === 'required');
 
-  return async (value) => {
+  return (value) => {
     // 成功标识
     let result = true;
+    // 包含 Promise 的返回值
+    let promisedResultMap;
     // 错误信息域
     const error = {
       id,
@@ -35,6 +37,16 @@ export default function (field) {
       let method = rule;
       let param;
 
+      const getErrorMessage = () => {
+        const seqText = field.messages ? field.messages.split(/\s*\|\s*/g)[index] : '';
+        return {
+          rule: method,
+          message: seqText // 替换 {{value}} 和 {{param}} 中参数
+            ? seqText.replace(/{{\s*value\s*}}/g, value).replace(/{{\s*param\s*}}/g, param)
+            : seqText,
+        };
+      };
+
       // 解析带参数的验证如 maxLength(12)
       if (parts) {
         method = parts[1];
@@ -50,30 +62,34 @@ export default function (field) {
       if (typeof currentMethod === 'function' && !jumpRule) {
         // Validate
         const currentResult = currentMethod.apply(this, [field, param]);
-        // 异步
+
         if (isPromise(currentResult)) {
-          // eslint-disable-next-line no-await-in-loop
-          result = await currentResult;
-        } else {
-          result = currentResult;
+          promisedResultMap = currentResult.then(resolvedResult => ({
+            result: resolvedResult,
+            error: {
+              ...error,
+              ...!resolvedResult && getErrorMessage(),
+            },
+          }));
+        }
+
+        if (!currentResult) {
+          result = false;
         }
       }
 
       // 验证不通过，则解析错误信息
       if (!result) {
-        // 当前验证不通过的规则
-        error.rule = method;
-
-        // 替换 {{value}} 和 {{param}} 中参数
-        const seqText = field.messages ? field.messages.split(/\s*\|\s*/g)[index] : '';
-        error.message = seqText
-          ? seqText.replace(/{{\s*value\s*}}/g, value).replace(/{{\s*param\s*}}/g, param)
-          : seqText;
+        Object.assign(error, getErrorMessage());
       }
     }
 
+    if (promisedResultMap) {
+      return promisedResultMap;
+    }
+
     return {
-      result: Boolean(result),
+      result,
       error,
     };
   };

@@ -236,29 +236,29 @@ describe('validator测试', () => {
       rules: 'required | isEmail | maxLength(32)',
       messages: '不能为空 | 请输入合法邮箱 | 不能超过 {{param}} 个字符',
     });
-    assert((await validateEmailField('123@123.com')).result);
-    assert(!(await validateEmailField(null)).result);
-    assert(!(await validateEmailField('')).result);
-    assert(!(await validateEmailField('123#123.com')).result);
-    assert(!(await validateEmailField('123@1231231231231231231231231.com')).result);
-    assert((await validateEmailField('123@1231231231231231231231231.com')).error.message === '不能超过 32 个字符');
+    assert(validateEmailField('123@123.com').result);
+    assert(!validateEmailField(null).result);
+    assert(!validateEmailField('').result);
+    assert(!validateEmailField('123#123.com').result);
+    assert(!validateEmailField('123@1231231231231231231231231.com').result);
+    assert(validateEmailField('123@1231231231231231231231231.com').error.message === '不能超过 32 个字符');
 
     const validatePhoneFiled = v.validateField({
       rules: 'isPhone',
       messages: '请输入正确的手机号',
     });
-    assert((await validatePhoneFiled('13333333333')).result);
-    assert((await validatePhoneFiled('')).result);
+    assert(validatePhoneFiled('13333333333').result);
+    assert(validatePhoneFiled('').result);
 
     const validateHobbyField = v.validateField({
       rules: 'required',
       messages: '不能为空',
     });
-    assert(!(await validateHobbyField([])).result);
-    assert((await validateHobbyField([])).error.message === '不能为空');
-    assert(!(await validateHobbyField('')).result);
-    assert((await validateHobbyField(['1'])).result);
-    assert((await validateHobbyField(['1'])).error.message === undefined);
+    assert(!validateHobbyField([]).result);
+    assert(validateHobbyField([]).error.message === '不能为空');
+    assert(!validateHobbyField('').result);
+    assert(validateHobbyField(['1']).result);
+    assert(validateHobbyField(['1']).error.message === undefined);
   });
 
   it('验证 Validator 实例组件', async () => {
@@ -267,13 +267,13 @@ describe('validator测试', () => {
       rules: 'required | isEmail | maxLength(32)',
       messages: '不能为空 | 请输入合法邮箱 | 不能超过 {{param}} 个字符',
     });
-    assert((await validateEmailField('123@123.com')).result);
-    assert(!(await validateEmailField('')).result);
+    assert(validateEmailField('123@123.com').result);
+    assert(!validateEmailField('').result);
 
     validator.removeMethods('isEmail', 'maxLength');
 
-    assert((await validateEmailField('123#123.com')).result);
-    assert((await validateEmailField('123@123.com1111111111111111111111')).result);
+    assert(validateEmailField('123#123.com').result);
+    assert(validateEmailField('123@123.com1111111111111111111111').result);
 
     const validateHobbyField = validator.validateField({
       rules: 'limitSelect(2)',
@@ -284,14 +284,14 @@ describe('validator测试', () => {
         return field.value.length <= param;
       },
     });
-    assert((await validateHobbyField([1, 2])).result);
-    assert(!(await validateHobbyField([1, 2, 3])).result);
+    assert(validateHobbyField([1, 2]).result);
+    assert(!validateHobbyField([1, 2, 3]).result);
   });
 
   it('验证 validator 异步方法', async () => {
     const validator = new V();
     const validateAsyncField = validator.validateField({
-      rules: 'isNumeric | doApi',
+      rules: 'isNumeric | doApi', // 异步方法需要在最后一个
       messages: '只能为数字 | 长度不小于10',
     });
     validator.addMethods({

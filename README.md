@@ -16,7 +16,7 @@ import Validator from 'validate-framework-utils';
 const validator = new Validator();
 
 const field = {
-  rules: 'required | isEmail | maxLength(32)',
+  rules: 'required | isEmail | maxLength(32)', // Asynchronous methods need to be put to the end
   messages: 'Can not be empty! | Please enter a valid email address. | Can not exceed {{param}} characters.',
 };
 
