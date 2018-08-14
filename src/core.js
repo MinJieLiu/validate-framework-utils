@@ -20,8 +20,8 @@ export default function (field) {
       name,
       value,
     };
-    // Assign value to field
-    Object.assign(field, { value });
+
+    field.value = value; // eslint-disable-line no-param-reassign
 
     for (let index = 0, ruleLength = rules.length; index < ruleLength; index += 1) {
       const rule = rules[index];
@@ -50,7 +50,9 @@ export default function (field) {
       if (typeof currentMethod === 'function' && !jumpRule) {
         // Validate
         // eslint-disable-next-line no-await-in-loop
-        result = await currentMethod.apply(this, [field, param]);
+        if (!await currentMethod.apply(this, [field, param])) {
+          result = false;
+        }
       }
 
       // 验证不通过，则解析错误信息
