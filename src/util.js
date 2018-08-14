@@ -26,3 +26,10 @@ export const parseToDate = (param) => {
  * @param value
  */
 export const isEmpty = value => value === null || value === undefined || value === '';
+
+/**
+ * 判断是否为 Promise
+ * @param obj
+ * @return {boolean}
+ */
+export const isPromise = obj => typeof obj === 'object' && typeof obj.then === 'function';

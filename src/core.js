@@ -1,4 +1,4 @@
-import { isEmpty } from './util';
+import { isEmpty, isPromise } from './util';
 
 /**
  * 通过 field 验证
@@ -49,9 +49,13 @@ export default function (field) {
       // 匹配验证
       if (typeof currentMethod === 'function' && !jumpRule) {
         // Validate
-        // eslint-disable-next-line no-await-in-loop
-        if (!await currentMethod.apply(this, [field, param])) {
-          result = false;
+        const currentResult = currentMethod.apply(this, [field, param]);
+        // 异步
+        if (isPromise(currentResult)) {
+          // eslint-disable-next-line no-await-in-loop
+          result = await currentResult;
+        } else {
+          result = currentResult;
         }
       }
 
@@ -69,7 +73,7 @@ export default function (field) {
     }
 
     return {
-      result,
+      result: Boolean(result),
       error,
     };
   };
